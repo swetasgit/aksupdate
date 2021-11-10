@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: swetasgitaksupdate 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: swetasgitaksupdate
+  template:
+    metadata:
+      labels:
+        app: swetasgitaksupdate 
+    spec:
+      containers:
+        - name: swetasgitaksupdate 
+          image: demoacr8112021.azurecr.io/swetasgitaksupdate
+          ports:
+          - containerPort: 8080
