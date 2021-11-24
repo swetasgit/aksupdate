@@ -66,9 +66,10 @@ stages:
             inputs:
               action: 'createSecret'
               kubernetesServiceConnection: 'demo-aks'
+              namespace: 'default'
               secretType: 'dockerRegistry'
               secretName: '$(imagePullSecret)'
-              dockerRegistryEndpoint: '$(dockerRegistryServiceConnection)'
+              dockerRegistryEndpoint: 'demoacr8112021'
 
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
