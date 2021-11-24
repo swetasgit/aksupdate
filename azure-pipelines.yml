@@ -75,7 +75,7 @@ stages:
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: 'deploy'
-              kubernetesServiceConnection: 'demo-aks'
+              kubernetesServiceConnection: 'swetasgitaksupdate-2408-demoCluster-default-1637763878237'
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
                 $(Pipeline.Workspace)/manifests/service.yml
@@ -99,7 +99,7 @@ stages:
             displayName: 'Create a new namespace for the pull request'
             inputs:
               connectionType: 'Kubernetes Service Connection'
-              kubernetesServiceEndpoint: 'demo-aks'
+              kubernetesServiceEndpoint: 'swetasgitaksupdate-2408-demoCluster-default-1637763878237'
               command: 'apply'
               useConfigurationFile: true
               secretType: 'dockerRegistry'
@@ -109,6 +109,7 @@ stages:
             displayName: Create imagePullSecret
             inputs:
               action: 'createSecret'
+              kubernetesServiceConnection: 'swetasgitaksupdate-2408-demoCluster-default-1637763878237'
               namespace: '$(k8sNamespaceForPR)'
               secretType: 'dockerRegistry'
               secretName: '$(imagePullSecret)'
@@ -118,7 +119,7 @@ stages:
             displayName: Deploy to the new namespace in the Kubernetes cluster
             inputs:
               action: 'deploy'
-              kubernetesServiceConnection: 'demo-aks'
+              kubernetesServiceConnection: 'swetasgitaksupdate-2408-demoCluster-default-1637763878237'
               namespace: '$(k8sNamespaceForPR)'
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
@@ -132,7 +133,7 @@ stages:
             continueOnError: true
             inputs:
               connectionType: 'Kubernetes Service Connection'
-              kubernetesServiceEndpoint: 'demo-aks'
+              kubernetesServiceEndpoint: 'swetasgitaksupdate-2408-demoCluster-default-1637763878237'
               namespace: '$(k8sNamespaceForPR)'
               command: 'get'
               arguments: 'svc'
