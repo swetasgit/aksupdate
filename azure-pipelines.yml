@@ -65,7 +65,7 @@ stages:
             displayName: Create imagePullSecret
             inputs:
               action: 'createSecret'
-              kubernetesServiceConnection: 'demo-aks'
+              kubernetesServiceConnection: 'swetasgitaksupdate-2408-demoCluster-default-1637763878237'
               namespace: 'default'
               secretType: 'dockerRegistry'
               secretName: '$(imagePullSecret)'
