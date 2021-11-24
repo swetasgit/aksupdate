@@ -64,21 +64,22 @@ stages:
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
-              action: createSecret
-              secretName: $(imagePullSecret)
-              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+              action: 'createSecret'
+              kubernetesServiceConnection: 'demo-aks'
+              secretType: 'dockerRegistry'
+              secretName: '$(imagePullSecret)'
+              dockerRegistryEndpoint: '$(dockerRegistryServiceConnection)'
 
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
-              action: deploy
+              action: 'deploy'
+              kubernetesServiceConnection: 'demo-aks'
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
                 $(Pipeline.Workspace)/manifests/service.yml
-              imagePullSecrets: |
-                $(imagePullSecret)
-              containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
+              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+              imagePullSecrets: '$(imagePullSecret)'
 
   - deployment: DeployPullRequest
     displayName: Deploy Pull request
@@ -96,9 +97,12 @@ stages:
           - task: Kubernetes@1
             displayName: 'Create a new namespace for the pull request'
             inputs:
-              command: apply
+              connectionType: 'Kubernetes Service Connection'
+              kubernetesServiceEndpoint: 'demo-aks'
+              command: 'apply'
               useConfigurationFile: true
-              inline: '{ "kind": "Namespace", "apiVersion": "v1", "metadata": { "name": "$(k8sNamespaceForPR)" }}'
+              secretType: 'dockerRegistry'
+              containerRegistryType: 'Azure Container Registry'
 
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
@@ -111,25 +115,28 @@ stages:
           - task: KubernetesManifest@0
             displayName: Deploy to the new namespace in the Kubernetes cluster
             inputs:
-              action: deploy
-              namespace: $(k8sNamespaceForPR)
+              action: 'deploy'
+              kubernetesServiceConnection: 'demo-aks'
+              namespace: '$(k8sNamespaceForPR)'
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
                 $(Pipeline.Workspace)/manifests/service.yml
-              imagePullSecrets: |
-                $(imagePullSecret)
-              containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
+              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+              imagePullSecrets: '$(imagePullSecret)'
 
           - task: Kubernetes@1
             name: get
             displayName: 'Get services in the new namespace'
             continueOnError: true
             inputs:
-              command: get
-              namespace: $(k8sNamespaceForPR)
-              arguments: svc
-              outputFormat: jsonpath='http://{.items[0].status.loadBalancer.ingress[0].ip}:{.items[0].spec.ports[0].port}'
+              connectionType: 'Kubernetes Service Connection'
+              kubernetesServiceEndpoint: 'demo-aks'
+              namespace: '$(k8sNamespaceForPR)'
+              command: 'get'
+              arguments: 'svc'
+              secretType: 'dockerRegistry'
+              containerRegistryType: 'Azure Container Registry'
+              outputFormat: 'jsonpath=''http://{.items[0].status.loadBalancer.ingress[0].ip}:{.items[0].spec.ports[0].port}'''
 
           # Getting the IP of the deployed service and writing it to a variable for posing comment
           - script: |
