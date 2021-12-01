@@ -62,7 +62,7 @@ stages:
             displayName: Create imagePullSecret
             inputs:
               action: 'createSecret'
-              kubernetesServiceConnection: 'swetasgitaksupdate-2408-demoCluster-default-1637763878237'
+              kubernetesServiceConnection: 'demoCluster-default'
               secretType: 'dockerRegistry'
               secretName: '$(imagePullSecret)'
               dockerRegistryEndpoint: '$(dockerRegistryServiceConnection)'
@@ -71,7 +71,7 @@ stages:
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: 'deploy'
-              kubernetesServiceConnection: 'swetasgitaksupdate-2408-demoCluster-default-1637763878237'
+              kubernetesServiceConnection: 'demoCluster-default'
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
                 $(Pipeline.Workspace)/manifests/service.yml
